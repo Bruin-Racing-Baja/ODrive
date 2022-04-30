@@ -18,7 +18,10 @@ Axis::Axis(int axis_num,
            TrapezoidalTrajectory& trap,
            Endstop& min_endstop,
            Endstop& max_endstop,
-           MechanicalBrake& mechanical_brake)
+           MechanicalBrake& mechanical_brake,
+           uint16_t neg_limit_gpio_pin,
+           uint16_t pos_limit_gpio_pin,
+           bool limits_enabled)
     : axis_num_(axis_num),
       default_step_gpio_pin_(default_step_gpio_pin),
       default_dir_gpio_pin_(default_dir_gpio_pin),
@@ -30,7 +33,10 @@ Axis::Axis(int axis_num,
       trap_traj_(trap),
       min_endstop_(min_endstop),
       max_endstop_(max_endstop),
-      mechanical_brake_(mechanical_brake)
+      mechanical_brake_(mechanical_brake),
+      neg_limit_gpio_pin_(neg_limit_gpio_pin),
+      pos_limit_gpio_pin_(pos_limit_gpio_pin),
+      limits_enabled_(limits_enabled)
 {
     encoder_.axis_ = this;
     sensorless_estimator_.axis_ = this;
@@ -78,6 +84,8 @@ bool Axis::apply_config() {
     config_.parent = this;
     decode_step_dir_pins();
     watchdog_feed();
+    neg_limit_gpio_ = get_gpio(neg_limit_gpio_pin_);
+    pos_limit_gpio_ = get_gpio(pos_limit_gpio_pin_);
     return true;
 }
 

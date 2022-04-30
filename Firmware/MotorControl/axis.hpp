@@ -114,7 +114,10 @@ public:
             TrapezoidalTrajectory& trap,
             Endstop& min_endstop,
             Endstop& max_endstop,
-            MechanicalBrake& mechanical_brake);
+            MechanicalBrake& mechanical_brake,
+            uint16_t neg_limit_gpio_pin,
+            uint16_t pos_limit_gpio_pin,
+            bool limits_enabled);
 
     bool apply_config();
     void clear_config();
@@ -182,6 +185,12 @@ public:
     // updated from config in constructor, and on protocol hook
     Stm32Gpio step_gpio_;
     Stm32Gpio dir_gpio_;
+
+    uint16_t neg_limit_gpio_pin_;
+    uint16_t pos_limit_gpio_pin_;
+    Stm32Gpio neg_limit_gpio_;
+    Stm32Gpio pos_limit_gpio_;
+    bool limits_enabled_;
 
     AxisState requested_state_ = AXIS_STATE_STARTUP_SEQUENCE;
     std::array<AxisState, 10> task_chain_ = { AXIS_STATE_UNDEFINED };
