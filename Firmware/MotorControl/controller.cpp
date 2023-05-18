@@ -134,6 +134,12 @@ bool Controller::update() {
         input_pos_ = fmodf_pos(input_pos_, *pos_wrap);
     }
 
+    if(axis_->limits_enabled_){
+        if((input_vel_ < 0 && axis_->neg_limit_gpio_.read()) || (input_vel_ > 0 && axis_->pos_limit_gpio_.read())){
+            input_vel_ = 0;
+        }
+    }
+
     // Update inputs
     switch (config_.input_mode) {
         case INPUT_MODE_INACTIVE: {

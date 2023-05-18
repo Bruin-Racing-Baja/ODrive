@@ -133,9 +133,9 @@ std::array<Axis, AXIS_COUNT> axes{{
         trap[0], // trap
         endstops[0], endstops[1], // min_endstop, max_endstop
         mechanical_brakes[0], // mechanical brake
-        7,
-        8,
-        true
+        0, // neg limit switch
+        0, // pos limit switch
+        false // limit switches enabled
     },
     {
         1, // axis_num
@@ -154,9 +154,9 @@ std::array<Axis, AXIS_COUNT> axes{{
         trap[1], // trap
         endstops[2], endstops[3], // min_endstop, max_endstop
         mechanical_brakes[1], // mechanical brake
-        0,
-        0,
-        false
+        7, // neg limit switch
+        8, // pos limit switch
+        true // limit switches enabled
     },
 }};
 

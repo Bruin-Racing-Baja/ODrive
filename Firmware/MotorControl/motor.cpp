@@ -563,16 +563,6 @@ void Motor::update(uint32_t timestamp) {
 
     std::optional<float> phase_vel = phase_vel_src_.present();
 
-    if(axis_->limits_enabled_){
-        if (!phase_vel.has_value()) {
-            error_ |= ERROR_UNKNOWN_PHASE_VEL;
-            return;
-        }
-        if((*phase_vel < 0 && axis_->neg_limit_gpio_.read()) ||  (*phase_vel > 0 && axis_->pos_limit_gpio_.read())){
-            disarm();
-        }
-    }
-
     if (config_.R_wL_FF_enable) {
         if (!phase_vel.has_value()) {
             error_ |= ERROR_UNKNOWN_PHASE_VEL;
