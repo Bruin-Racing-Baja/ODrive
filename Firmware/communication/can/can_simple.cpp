@@ -151,9 +151,26 @@ void CANSimple::do_command(Axis& axis, const can_Message_t& msg) {
         case MSG_SET_VEL_GAINS:
             set_vel_gains_callback(axis, msg);
             break;
+        case MSG_GET_GPIO_STATES:
+            if (msg.rtr)
+                get_gpio_states_callback(axis);
+            break;
         default:
             break;
     }
+}
+
+bool CANSimple::get_gpio_states_callback(const Axis& axis) {
+    can_Message_t txmsg;
+    txmsg.id = axis.config_.can.node_id << NUM_CMD_ID_BITS;
+    txmsg.id += MSG_GET_GPIO_STATES;
+    txmsg.isExt = axis.config_.can.is_extended;
+    txmsg.len = 8;
+
+    can_setSignal<uint32_t>(txmsg, odrv.get_gpio_states(), 0, 32, true);
+    can_setSignal<uint32_t>(txmsg, 69, 32, 32, true);
+
+    return canbus_->send_message(txmsg);
 }
 
 void CANSimple::nmt_callback(const Axis& axis, const can_Message_t& msg) {
@@ -321,9 +338,9 @@ bool CANSimple::get_iq_callback(const Axis& axis) {
     }
 
     static_assert(sizeof(float) == sizeof(Idq_setpoint->first));
-    static_assert(sizeof(float) == sizeof(Idq_setpoint->second));
+    // static_assert(sizeof(float) == sizeof(Idq_setpoint->second));
     can_setSignal<float>(txmsg, Idq_setpoint->first, 0, 32, true);
-    can_setSignal<float>(txmsg, Idq_setpoint->second, 32, 32, true);
+    can_setSignal<uint32_t>(txmsg, odrv.get_gpio_states(), 32, 32, true);
 
     return canbus_->send_message(txmsg);
 }
